@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { CartIcon } from "@/components/cart-icon";
 
 export default async function StorefrontLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -22,9 +23,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/cart" className="relative group p-2 hover:bg-[#FFFBF5] rounded-full transition-colors border border-transparent hover:border-[#F2E8D9]">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C4D43" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:stroke-[#D96C4E] transition-colors"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
-            </Link>
+            <CartIcon />
             {session ? (
               <div className="flex items-center gap-4">
                 <Link href="/account" className="text-sm font-medium text-[#5C4D43] hover:text-[#D96C4E]">

@@ -11,7 +11,7 @@ export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
   const { items, subtotal: totalPrice } = cart;
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const [formData, setFormData] = useState({
     customerName: "",
@@ -22,8 +22,32 @@ export default function CheckoutPage() {
     discountCode: "",
   });
   
+  useEffect(() => {
+    async function fetchProfile() {
+      if (status === "authenticated") {
+        try {
+          const res = await fetch("/api/user/profile");
+          const data = await res.json();
+          if (data.success && data.user) {
+            setFormData(prev => ({
+              ...prev,
+              customerName: prev.customerName || data.user.name || "",
+              email: prev.email || data.user.email || "",
+              phone: prev.phone || data.user.phone || "",
+              address: prev.address || data.user.address || "",
+            }));
+          }
+        } catch (error) {
+          console.error("Failed to fetch profile for autofill", error);
+        }
+      }
+    }
+    fetchProfile();
+  }, [status]);
+  
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [discountStatus, setDiscountStatus] = useState<{
     status: "idle" | "checking" | "valid" | "invalid";
     message: string;
@@ -105,6 +129,7 @@ export default function CheckoutPage() {
       
       const data = await res.json();
       if (res.ok && data.success) {
+        setIsSuccess(true);
         clearCart();
         router.push(`/bill/${data.orderId}`);
       } else {
@@ -117,7 +142,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
+  if (items.length === 0 && !isSuccess) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center p-4">
         <h2 className="text-xl font-bold text-[#40332B] mb-4">Giỏ hàng của bạn đang trống</h2>
