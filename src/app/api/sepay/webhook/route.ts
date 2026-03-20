@@ -26,12 +26,12 @@ export async function POST(request: Request) {
         const orderId = match[0].toUpperCase();
 
         const order = await prisma.order.findUnique({
-          where: { id: orderId }
+          where: { orderId: orderId }
         });
 
         if (order && order.paymentStatus !== "PAID") {
           await prisma.order.update({
-            where: { id: orderId },
+            where: { orderId: orderId },
             data: {
               paymentStatus: "PAID",
             }
