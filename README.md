@@ -27,7 +27,7 @@ Chào mừng bạn đến với **MaiKery**, nền tảng thương mại điện
 - **Database:** PostgreSQL (Supabase/Neon).
 - **ORM:** Prisma.
 - **Authentication:** NextAuth.js.
-- **QR Code:** VietQR API integration.
+- **QR Code & Thanh Toán:** VietQR API integration, SePay Webhook.
 
 ## 📦 Hướng Dẫn Cài Đặt
 
@@ -48,6 +48,7 @@ Tạo file `.env.local` và điền các thông tin sau:
 DATABASE_URL="your-postgresql-url"
 NEXTAUTH_SECRET="your-secret"
 NEXTAUTH_URL="http://localhost:3000"
+SEPAY_WEBHOOK_SECRET="your-sepay-api-key" # Tùy chọn: dùng để bảo mật webhook SePay
 ```
 
 ### 4. Khởi tạo Database
@@ -59,6 +60,13 @@ npx prisma migrate dev
 ```bash
 npm run dev
 ```
+
+### 6. Cấu hình SePay Webhook (Tự động cập nhật thanh toán)
+Để hệ thống tự động nhận biết khách hàng đã chuyển khoản thành công và chuyển trạng thái đơn hàng sang `PAID`:
+1. Mở trang quản trị SePay.
+2. Thêm Webhook Integration, cài đặt URL trỏ tới API của bạn: `https://your-domain.com/api/sepay/webhook`
+3. Trong ô Header / API Token của SePay (nếu có), thiết lập theo dạng `Apikey your-sepay-api-key`.
+4. Điền mã này vào `SEPAY_WEBHOOK_SECRET` trong file `.env.local` của bạn.
 
 ## 🔐 Tài khoản dùng thử
 
