@@ -13,7 +13,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center">
-              <Image src="/logo.png" alt="MaiKery Logo" width={140} height={40} className="object-contain h-10 w-auto" priority />
+              <Image src="/logo.jpg" alt="MaiKery Logo" width={140} height={40} className="object-contain h-10 w-auto" priority />
             </Link>
             <nav className="hidden md:flex gap-6 text-sm font-medium text-[#5C4D43]">
               <Link href="/products" className="hover:text-[#D96C4E] transition-colors">Sản phẩm</Link>

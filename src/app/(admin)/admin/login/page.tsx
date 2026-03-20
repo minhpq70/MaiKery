@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-10 flex flex-col items-center">
           <Link href="/" className="inline-block bg-white/90 p-3 rounded-xl mb-2">
-            <Image src="/logo.png" alt="MaiKery Logo" width={180} height={60} className="object-contain h-14 w-auto" priority />
+            <Image src="/logo.jpg" alt="MaiKery Logo" width={180} height={60} className="object-contain h-14 w-auto" priority />
           </Link>
           <p className="text-gray-300 mt-2 tracking-wide text-sm uppercase">Trang Quản Trị Hệ Thống</p>
         </div>

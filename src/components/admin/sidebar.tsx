@@ -31,7 +31,7 @@ export function Sidebar() {
       <div className="p-6">
         <Link href="/admin" className="flex items-center gap-2">
           <div className="bg-white/90 p-1.5 rounded-lg flex items-center justify-center">
-            <Image src="/logo.png" alt="MaiKery Logo" width={120} height={32} className="object-contain h-8 w-auto" priority />
+            <Image src="/logo.jpg" alt="MaiKery Logo" width={120} height={32} className="object-contain h-8 w-auto" priority />
           </div>
           <span className="text-xs font-bold bg-[#D96C4E] text-white px-2 py-0.5 rounded-full ml-1">ADMIN</span>
         </Link>
