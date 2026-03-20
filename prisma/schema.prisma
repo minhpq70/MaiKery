@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  address   String?
+  role      Role     @default(CUSTOMER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  productCode String      @unique
+  name        String
+  description String
+  imageUrl    String?
+  salePrice   Decimal     @db.Decimal(12, 0)
+  isActive    Boolean     @default(true)
+  isFeatured  Boolean     @default(false)
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+
+  @@index([isActive])
+  @@index([productCode])
+}
+
+model Order {
+  id              String         @id @default(cuid())
+  orderId         String         @unique
+  customerName    String
+  email           String
+  phone           String
+  address         String
+  discountCode    String?
+  discountPercent Decimal        @default(0) @db.Decimal(5, 2)
+  subtotal        Decimal        @db.Decimal(12, 0)
+  discountAmount  Decimal        @default(0) @db.Decimal(12, 0)
+  totalPayable    Decimal        @db.Decimal(12, 0)
+  paymentStatus   PaymentStatus  @default(UNPAID)
+  deliveryStatus  DeliveryStatus @default(PENDING)
+  note            String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  userId          String?
+  user            User?          @relation(fields: [userId], references: [id])
+  items           OrderItem[]
+
+  @@index([orderId])
+  @@index([email])
+  @@index([paymentStatus])
+  @@index([deliveryStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  productCode String
+  productName String
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(12, 0)
+  lineTotal   Decimal @db.Decimal(12, 0)
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+}
+
+model DiscountCode {
+  id                String       @id @default(cuid())
+  code              String       @unique
+  discountType      DiscountType @default(PERCENTAGE)
+  discountValue     Decimal      @db.Decimal(12, 0)
+  minimumOrderValue Decimal?     @db.Decimal(12, 0)
+  usageLimit        Int?
+  usedCount         Int          @default(0)
+  expiresAt         DateTime?
+  active            Boolean      @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([code])
+}
+
+model DailyOrderSequence {
+  date    String @id
+  counter Int    @default(0)
+}
+
+model SiteSettings {
+  id            String   @id @default("default")
+  bankBin       String   @default("")
+  bankAccount   String   @default("")
+  bankName      String   @default("")
+  bankShortName String   @default("")
+  logoUrl       String   @default("")
+  storeName     String   @default("MaiKery")
+  storePhone    String   @default("")
+  storeEmail    String   @default("")
+  storeAddress  String   @default("")
+  updatedAt     DateTime @updatedAt
+}
+
+model test {
+  id Int @id @default(autoincrement())
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+enum DeliveryStatus {
+  PENDING
+  PREPARING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
