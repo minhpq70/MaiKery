@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Eye, Search } from "lucide-react";
+import { Eye, Search, Printer } from "lucide-react";
 import { format } from "date-fns";
 
 export default async function AdminOrdersPage(props: {
@@ -96,6 +96,7 @@ export default async function AdminOrdersPage(props: {
                 <th className="px-6 py-4">Tổng tiền</th>
                 <th className="px-6 py-4">Thanh toán</th>
                 <th className="px-6 py-4">Giao hàng</th>
+                <th className="px-6 py-4 text-center">Hóa đơn</th>
                 <th className="px-6 py-4 text-right">Chi tiết</th>
               </tr>
             </thead>
@@ -143,6 +144,17 @@ export default async function AdminOrdersPage(props: {
                            order.deliveryStatus === "DELIVERED" ? "Đã giao" : "Đã hủy"}
                         </span>
                       </td>
+                      <td className="px-6 py-4 text-center">
+                        <Link
+                          href={`/bill/${order.orderId}`}
+                          target="_blank"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-gray-800 hover:bg-black rounded-lg transition-colors"
+                          title="In Hóa Đơn"
+                        >
+                          <Printer className="w-3.5 h-3.5" />
+                          <span>In Bill</span>
+                        </Link>
+                      </td>
                       <td className="px-6 py-4 text-right">
                         <Link
                           href={`/admin/orders/${order.id}`}
@@ -157,7 +169,7 @@ export default async function AdminOrdersPage(props: {
                 })
               ) : (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     Không tìm thấy đơn hàng nào
                   </td>
                 </tr>

@@ -18,7 +18,7 @@ const navItems = [
   { name: "Tổng quan", href: "/admin", icon: LayoutDashboard },
   { name: "Sản phẩm", href: "/admin/products", icon: Package },
   { name: "Đơn hàng", href: "/admin/orders", icon: ShoppingCart },
-  { name: "Mã giảm giá", href: "/admin/discount-codes", icon: TicketPercent },
+  { name: "Mã giảm giá", href: "/admin/discounts", icon: TicketPercent },
   { name: "Tài khoản", href: "/admin/users", icon: Users },
   { name: "Cài đặt", href: "/admin/settings", icon: Settings },
 ];

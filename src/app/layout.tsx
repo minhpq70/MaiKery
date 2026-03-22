@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className={`${geist.variable} font-sans antialiased`}>
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
         <Providers>{children}</Providers>
       </body>
     </html>
