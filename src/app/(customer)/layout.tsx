@@ -10,7 +10,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
   return (
     <div className="flex min-h-screen flex-col bg-[#FFFBF5]">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-[#F2E8D9] bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-[#F2E8D9] bg-white/80 backdrop-blur-md print:hidden">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center">
@@ -48,7 +48,7 @@ export default async function StorefrontLayout({ children }: { children: React.R
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="bg-[#40332B] text-[#F2E8D9] py-12">
+      <footer className="bg-[#40332B] text-[#F2E8D9] py-12 print:hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-xl font-serif font-bold mb-4 text-white">MaiKery</h3>

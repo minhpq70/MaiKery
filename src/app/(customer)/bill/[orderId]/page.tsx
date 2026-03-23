@@ -20,7 +20,7 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
     : null;
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl min-h-[70vh]">
+    <div className="container mx-auto px-4 py-12 max-w-4xl min-h-[70vh] print:py-0 print:px-0 print:min-h-0 print:max-w-none">
       <div className="mb-6 flex justify-between items-center print:hidden">
         <Link href="/" className="flex items-center text-[#5C4D43] hover:text-[#D96C4E] font-medium transition-colors">
           <ChevronLeft className="w-5 h-5 mr-1" /> Về trang chủ
@@ -28,19 +28,37 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
         <PrintButton />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-[#F2E8D9] overflow-hidden">
-        {/* Header */}
-        <div className="bg-[#40332B] text-white p-8 text-center flex flex-col items-center">
+      {/* Print-only Header */}
+      <div className="hidden print:flex flex-row justify-between items-start mb-6 border-b border-[#F2E8D9] pb-4">
+        <div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.jpg" alt="MaiKery" className="h-10 w-auto mb-2 object-contain" />
+          <h1 className="text-xl font-serif font-bold text-[#40332B] mb-1">{settings?.storeName || "MaiKery"}</h1>
+          <div className="text-sm text-[#5C4D43] space-y-0.5">
+            {settings?.storeAddress && <p>Địa chỉ: {settings.storeAddress}</p>}
+            {settings?.storePhone && <p>Hotline: {settings.storePhone}</p>}
+            {settings?.storeEmail && <p>Email: {settings.storeEmail}</p>}
+          </div>
+        </div>
+        <div className="text-right">
+          <h2 className="text-2xl font-bold uppercase text-[#D96C4E] mb-1">Hóa Đơn</h2>
+          <p className="text-sm font-medium text-[#40332B]">Mã ĐH: {order.orderId}</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-[#F2E8D9] overflow-hidden print:border-none print:shadow-none print:rounded-none">
+        {/* Header - Screen only */}
+        <div className="bg-[#40332B] text-white p-8 text-center flex flex-col items-center print:hidden">
           <CheckCircle2 className="w-16 h-16 text-[#D96C4E] mb-4" />
           <h1 className="text-3xl font-serif font-bold mb-2">Đặt hàng thành công!</h1>
           <p className="opacity-80">Mã đơn hàng: <span className="font-bold">{order.orderId}</span></p>
         </div>
 
-        <div className="p-8 flex flex-col md:flex-row gap-8">
+        <div className="p-8 flex flex-col md:flex-row gap-8 print:p-0 print:gap-4 print:flex-row">
           {/* Order Details */}
-          <div className="flex-[2] space-y-8">
+          <div className="flex-[2] space-y-8 print:space-y-4">
             <section>
-              <h3 className="text-lg font-bold text-[#40332B] mb-4 border-b border-[#F2E8D9] pb-2">Thông tin khách hàng</h3>
+              <h3 className="text-lg font-bold text-[#40332B] mb-4 border-b border-[#F2E8D9] pb-2 print:mb-2 print:text-base">Thông tin khách hàng</h3>
               <div className="grid grid-cols-2 gap-y-3 text-sm">
                 <div className="text-[#5C4D43]">Họ tên:</div>
                 <div className="font-medium text-[#40332B]">{order.customerName}</div>
@@ -64,8 +82,8 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
             </section>
 
             <section>
-              <h3 className="text-lg font-bold text-[#40332B] mb-4 border-b border-[#F2E8D9] pb-2">Chi tiết đơn hàng</h3>
-              <div className="space-y-4">
+              <h3 className="text-lg font-bold text-[#40332B] mb-4 border-b border-[#F2E8D9] pb-2 print:mb-2 print:text-base">Chi tiết đơn hàng</h3>
+              <div className="space-y-4 print:space-y-2">
                 {order.items.map((item: any) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <div className="flex gap-4">
@@ -99,19 +117,19 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
           </div>
 
           {/* Payment QR - Only show if UNPAID and settings exist */}
-          <div className="flex-1 bg-[#FFFBF5] p-6 rounded-2xl border border-[#F2E8D9] flex flex-col items-center justify-center text-center">
+          <div className="flex-1 bg-[#FFFBF5] p-6 rounded-2xl border border-[#F2E8D9] flex flex-col items-center justify-center text-center print:border-none print:p-0 print:bg-transparent">
             {order.paymentStatus === "UNPAID" && qrUrl ? (
               <>
-                <h3 className="text-lg font-bold text-[#40332B] mb-2">Thanh toán chuyển khoản</h3>
-                <p className="text-xs text-[#5C4D43] mb-6">Quét mã QR qua ứng dụng ngân hàng để thanh toán nhanh</p>
+                <h3 className="text-lg font-bold text-[#40332B] mb-2 print:text-base">Thanh toán chuyển khoản</h3>
+                <p className="text-xs text-[#5C4D43] mb-6 print:hidden">Quét mã QR qua ứng dụng ngân hàng để thanh toán nhanh</p>
                 
-                <div className="bg-white p-3 rounded-xl border border-[#E5D5C5] shadow-sm mb-6 inline-block">
+                <div className="bg-white p-3 rounded-xl border border-[#E5D5C5] shadow-sm mb-6 inline-block print:p-1 print:border-none print:shadow-none print:mb-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={qrUrl} alt="VietQR Payment" className="w-[200px] h-auto mx-auto" />
                 </div>
 
-                <div className="text-sm space-y-2 text-left w-full bg-white p-4 rounded-xl border border-[#E5D5C5]">
-                  <div className="flex justify-between">
+                <div className="text-sm space-y-2 text-left w-full bg-white p-4 rounded-xl border border-[#E5D5C5] print:border-none print:p-0 print:space-y-1">
+                  <div className="flex justify-between print:justify-start print:gap-2">
                     <span className="text-[#5C4D43]">Ngân hàng:</span>
                     <span className="font-bold text-[#40332B]">{settings?.bankShortName || settings?.bankName}</span>
                   </div>
@@ -123,7 +141,7 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
                     <span className="text-[#5C4D43]">Số TK:</span>
                     <span className="font-bold text-[#40332B]">{settings?.bankAccount}</span>
                   </div>
-                  <div className="flex justify-between border-t border-dashed border-[#E5D5C5] pt-2 mt-2">
+                  <div className="flex justify-between border-t border-dashed border-[#E5D5C5] pt-2 mt-2 print:border-none print:pt-0 print:mt-0 print:justify-start print:gap-2">
                     <span className="text-[#5C4D43]">Nội dung DK:</span>
                     <span className="font-bold text-[#8C3D2B]">{order.orderId}</span>
                   </div>
@@ -146,6 +164,12 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
               </div>
             )}
           </div>
+        </div>
+        
+        {/* Footer info for print mode */}
+        <div className="hidden print:block border-t border-[#F2E8D9] pt-4 mt-6 text-center text-xs text-[#5C4D43]">
+          <p className="font-semibold text-[#40332B] mb-0.5">Cảm ơn quý khách đã tin tưởng và sử dụng dịch vụ của MaiKery!</p>
+          <p>Mỗi chiếc bánh đều được làm bằng tất cả đam mê và sự tận tâm.</p>
         </div>
       </div>
     </div>
