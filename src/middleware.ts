@@ -6,14 +6,22 @@ export default withAuth(
     const token = req.nextauth.token;
     const isAuth = !!token;
     const path = req.nextUrl.pathname;
-    const isAuthPage = path.startsWith("/login") || path.startsWith("/register") || path === "/admin/login";
+    const isCustomerAuthPage = path.startsWith("/login") || path.startsWith("/register");
+    const isAdminAuthPage = path === "/admin/login";
 
-    if (isAuthPage) {
+    if (isCustomerAuthPage) {
       if (isAuth) {
         if (token.role === "ADMIN") {
           return NextResponse.redirect(new URL("/admin", req.url));
         }
         return NextResponse.redirect(new URL("/account", req.url));
+      }
+      return NextResponse.next();
+    }
+
+    if (isAdminAuthPage) {
+      if (isAuth && token.role === "ADMIN") {
+        return NextResponse.redirect(new URL("/admin", req.url));
       }
       return NextResponse.next();
     }
