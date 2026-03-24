@@ -10,12 +10,14 @@ import {
   Settings, 
   Users, 
   TicketPercent,
-  LogOut
+  LogOut,
+  CircleDollarSign
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const navItems = [
   { name: "Tổng quan", href: "/admin", icon: LayoutDashboard },
+  { name: "Doanh thu", href: "/admin/revenue", icon: CircleDollarSign },
   { name: "Sản phẩm", href: "/admin/products", icon: Package },
   { name: "Đơn hàng", href: "/admin/orders", icon: ShoppingCart },
   { name: "Mã giảm giá", href: "/admin/discounts", icon: TicketPercent },

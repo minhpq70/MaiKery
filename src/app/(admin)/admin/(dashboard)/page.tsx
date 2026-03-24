@@ -7,7 +7,7 @@ export default async function AdminDashboardPage() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const [totalOrders, todayOrders, productsCount, pendingDeliveries] = await Promise.all([
+  const [totalOrders, todayOrders, productsCount, pendingDeliveries, paidOrdersSum] = await Promise.all([
     prisma.order.count(),
     prisma.order.count({
       where: {
@@ -22,7 +22,17 @@ export default async function AdminDashboardPage() {
         deliveryStatus: "PENDING",
       },
     }),
+    prisma.order.aggregate({
+      where: {
+        paymentStatus: "PAID",
+      },
+      _sum: {
+        totalPayable: true,
+      },
+    }),
   ]);
+
+  const totalRevenue = paidOrdersSum._sum.totalPayable || 0;
 
   const recentOrders = await prisma.order.findMany({
     take: 5,
@@ -42,7 +52,9 @@ export default async function AdminDashboardPage() {
         <div className="bg-white p-6 rounded-xl border border-[#E5D5C5] shadow-sm flex items-start justify-between">
           <div>
             <h3 className="text-sm font-medium text-gray-500">Tổng doanh thu</h3>
-            <p className="text-2xl font-bold mt-2">Đang tính...</p>
+            <p className="text-2xl font-bold mt-2">
+              {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(totalRevenue))}
+            </p>
           </div>
           <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
             <CircleDollarSign className="w-5 h-5" />
