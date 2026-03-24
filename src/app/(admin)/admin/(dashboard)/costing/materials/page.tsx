@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatCurrency } from "@/lib/utils";
 
 export default function MaterialsDashboard() {
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // New Material form state
   const [newCode, setNewCode] = useState("");
   const [newName, setNewName] = useState("");
   const [newUnit, setNewUnit] = useState("g");
@@ -30,8 +28,8 @@ export default function MaterialsDashboard() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCode || !newName || !newUnit) return alert("Fill all fields");
-    
+    if (!newCode || !newName || !newUnit) return alert("Vui lòng điền đầy đủ thông tin");
+
     try {
       await fetch("/api/materials", {
         method: "POST",
@@ -39,7 +37,7 @@ export default function MaterialsDashboard() {
         body: JSON.stringify({
           code: newCode,
           name: newName,
-          category: "Raw Material",
+          category: "Nguyên liệu thô",
           baseUnit: newUnit,
           isActive: true
         })
@@ -49,72 +47,80 @@ export default function MaterialsDashboard() {
       setNewUnit("g");
       fetchMaterials();
     } catch (error) {
-      alert("Failed to create material");
+      alert("Không thể thêm nguyên liệu. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Materials & Cost Snapshots</h1>
-      
-      <div className="bg-white p-6 rounded-lg shadow-sm border mb-8">
-        <h2 className="text-lg font-semibold mb-4 text-gray-700">Add New Material</h2>
-        <form onSubmit={handleCreate} className="flex gap-4 items-end">
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-[#40332B]">Nguyên liệu & Chi phí</h1>
+
+      <div className="bg-white p-6 rounded-xl border border-[#E5D5C5] shadow-sm">
+        <h2 className="text-lg font-semibold mb-4 text-[#40332B]">Thêm nguyên liệu mới</h2>
+        <form onSubmit={handleCreate} className="flex gap-4 items-end flex-wrap">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
-            <input 
-              value={newCode} onChange={(e) => setNewCode(e.target.value)}
-              className="border p-2 rounded w-32" placeholder="e.g. FLR01" 
+            <label className="block text-sm font-medium text-gray-600 mb-1">Mã nguyên liệu</label>
+            <input
+              value={newCode}
+              onChange={(e) => setNewCode(e.target.value)}
+              className="border border-gray-200 p-2 rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
+              placeholder="VD: NL001"
             />
           </div>
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input 
-              value={newName} onChange={(e) => setNewName(e.target.value)}
-              className="border p-2 rounded w-full" placeholder="e.g. Bread Flour" 
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm font-medium text-gray-600 mb-1">Tên nguyên liệu</label>
+            <input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              className="border border-gray-200 p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
+              placeholder="VD: Bột mì"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Base Unit</label>
-            <select 
-              value={newUnit} onChange={(e) => setNewUnit(e.target.value)}
-              className="border p-2 rounded w-24">
+            <label className="block text-sm font-medium text-gray-600 mb-1">Đơn vị cơ bản</label>
+            <select
+              value={newUnit}
+              onChange={(e) => setNewUnit(e.target.value)}
+              className="border border-gray-200 p-2 rounded-lg w-24 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
+            >
               <option value="g">g</option>
               <option value="kg">kg</option>
               <option value="ml">ml</option>
               <option value="l">L</option>
-              <option value="pc">pc</option>
+              <option value="pc">cái</option>
             </select>
           </div>
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700 transition">
-            Add
+          <button type="submit" className="bg-[#D96C4E] hover:bg-[#C55A3D] text-white px-5 py-2 rounded-lg font-medium transition-colors">
+            Thêm mới
           </button>
         </form>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E5D5C5] shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-[#E5D5C5]">
+          <h2 className="font-semibold text-[#40332B]">Danh sách nguyên liệu</h2>
+        </div>
         {loading ? (
-          <div className="p-8 text-center text-gray-500">Loading materials...</div>
+          <div className="p-8 text-center text-gray-500">Đang tải...</div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-600 border-b text-sm">
-                <th className="p-4 font-medium">Code</th>
-                <th className="p-4 font-medium">Name</th>
-                <th className="p-4 font-medium">Base Unit</th>
-                <th className="p-4 font-medium">Current Unit Cost ({materials.length > 0 ? '$' : ''})</th>
-                <th className="p-4 font-medium">Cost Source</th>
+          <table className="w-full text-left">
+            <thead className="bg-[#FFFBF5] text-[#5C4D43] text-sm border-b border-[#E5D5C5]">
+              <tr>
+                <th className="p-4 font-medium">Mã</th>
+                <th className="p-4 font-medium">Tên nguyên liệu</th>
+                <th className="p-4 font-medium">Đơn vị</th>
+                <th className="p-4 font-medium">Giá vốn hiện tại (/đv)</th>
+                <th className="p-4 font-medium">Phương pháp tính</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-[#E5D5C5] text-sm">
               {materials.map((m) => (
                 <tr key={m.id} className="hover:bg-gray-50">
-                  <td className="p-4 text-gray-800">{m.code}</td>
+                  <td className="p-4 text-gray-600 font-mono">{m.code}</td>
                   <td className="p-4 font-medium text-gray-900">{m.name}</td>
                   <td className="p-4 text-gray-600">{m.baseUnit}</td>
-                  <td className="p-4 font-semibold text-green-600">
-                    {/* The API returns m.currentCost -> formatted directly or manually */}
-                    ${Number(m.currentCost).toFixed(4)}
+                  <td className="p-4 font-semibold text-[#D96C4E]">
+                    {Number(m.currentCost).toLocaleString("vi-VN")} ₫
                   </td>
                   <td className="p-4">
                     <span className="px-2 py-1 text-xs rounded-full bg-blue-50 text-blue-600 whitespace-nowrap">
@@ -125,7 +131,9 @@ export default function MaterialsDashboard() {
               ))}
               {materials.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">No materials found.</td>
+                  <td colSpan={5} className="p-8 text-center text-gray-500">
+                    Chưa có nguyên liệu nào. Hãy thêm nguyên liệu đầu tiên!
+                  </td>
                 </tr>
               )}
             </tbody>

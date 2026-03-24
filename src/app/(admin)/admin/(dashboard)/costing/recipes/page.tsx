@@ -8,10 +8,9 @@ export default function RecipesDashboard() {
   const [materials, setMaterials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // New Recipe State
   const [productId, setProductId] = useState("");
   const [versionNo, setVersionNo] = useState(1);
-  const [name, setName] = useState("Standard Recipe");
+  const [name, setName] = useState("Công thức chuẩn");
   const [yieldQty, setYieldQty] = useState(10);
   const [items, setItems] = useState<any[]>([{ materialId: "", quantity: 0, unit: "g", wastePercent: 0 }]);
 
@@ -22,15 +21,15 @@ export default function RecipesDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [rRes, mRes] = await Promise.all([
+      const [rRes, mRes, pRes] = await Promise.all([
         fetch("/api/recipes"),
-        fetch("/api/materials")
+        fetch("/api/materials"),
+        fetch("/api/products?limit=100")
       ]);
       setRecipes(await rRes.json());
       setMaterials(await mRes.json());
-      
-      // we'd typically fetch /api/products here. Mocking for UI
-      setProducts([{ id: "prod-1", name: "Sourdough Bread" }, { id: "prod-2", name: "Croissant" }]);
+      const pData = await pRes.json();
+      setProducts(Array.isArray(pData) ? pData : (pData.products ?? []));
     } catch (e) { console.error(e); }
     setLoading(false);
   };
@@ -39,7 +38,7 @@ export default function RecipesDashboard() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!productId || items.length === 0) return alert("Select product and add items");
+    if (!productId || items.length === 0) return alert("Vui lòng chọn sản phẩm và thêm nguyên liệu");
 
     try {
       await fetch("/api/recipes", {
@@ -50,115 +49,129 @@ export default function RecipesDashboard() {
         })
       });
       fetchData();
-      alert("Recipe created!");
+      alert("Đã lưu công thức!");
     } catch (error) {
-      alert("Failed to create recipe");
+      alert("Không thể lưu công thức. Vui lòng thử lại.");
     }
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Recipe Formula Manager</h1>
-      
-      <div className="bg-white p-6 rounded-lg shadow-sm border mb-8">
-        <h2 className="text-lg font-semibold mb-4 text-gray-700">Creates a New Recipe Version</h2>
-        
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-[#40332B]">Quản lý Công thức</h1>
+
+      <div className="bg-white p-6 rounded-xl border border-[#E5D5C5] shadow-sm">
+        <h2 className="text-lg font-semibold mb-4 text-[#40332B]">Tạo công thức mới</h2>
+
         <form onSubmit={handleCreate} className="flex flex-col gap-4">
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Product</label>
-              <select className="border p-2 rounded w-48" value={productId} onChange={e => setProductId(e.target.value)}>
-                <option value="">Select...</option>
+              <label className="block text-sm text-gray-600 mb-1">Sản phẩm</label>
+              <select
+                className="border border-gray-200 p-2 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
+                value={productId} onChange={e => setProductId(e.target.value)}
+              >
+                <option value="">-- Chọn sản phẩm --</option>
                 {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Label Name</label>
-              <input type="text" className="border p-2 rounded" value={name} onChange={e => setName(e.target.value)} />
+              <label className="block text-sm text-gray-600 mb-1">Tên công thức</label>
+              <input type="text" className="border border-gray-200 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D96C4E]" value={name} onChange={e => setName(e.target.value)} />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Target Yield (pcs)</label>
-              <input type="number" className="border p-2 rounded w-24" value={yieldQty} onChange={e => setYieldQty(Number(e.target.value))} />
+              <label className="block text-sm text-gray-600 mb-1">Số lượng ra lò (cái)</label>
+              <input type="number" className="border border-gray-200 p-2 rounded-lg w-28 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]" value={yieldQty} onChange={e => setYieldQty(Number(e.target.value))} />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Version</label>
-              <input type="number" className="border p-2 rounded w-20" value={versionNo} onChange={e => setVersionNo(Number(e.target.value))} />
+              <label className="block text-sm text-gray-600 mb-1">Phiên bản</label>
+              <input type="number" className="border border-gray-200 p-2 rounded-lg w-20 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]" value={versionNo} onChange={e => setVersionNo(Number(e.target.value))} />
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-md border">
-            <h3 className="text-sm font-semibold text-gray-600 mb-3">Formula Ingredients</h3>
+          <div className="bg-[#FFFBF5] p-4 rounded-lg border border-[#E5D5C5]">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Danh sách nguyên liệu trong công thức</h3>
             {items.map((item, idx) => (
-              <div key={idx} className="flex gap-2 items-end mb-2">
-                <div className="flex-1">
-                  <label className="block text-xs text-gray-500 mb-1">Material</label>
-                  <select className="border p-2 rounded w-full text-sm" value={item.materialId} onChange={e => {
+              <div key={idx} className="flex gap-2 items-end mb-3 flex-wrap">
+                <div className="flex-1 min-w-[180px]">
+                  <label className="block text-xs text-gray-500 mb-1">Nguyên liệu</label>
+                  <select className="border border-gray-200 p-2 rounded-lg w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#D96C4E]" value={item.materialId} onChange={e => {
                     const newItems = [...items]; newItems[idx].materialId = e.target.value; setItems(newItems);
                   }}>
-                    <option value="">Select Material...</option>
+                    <option value="">-- Chọn nguyên liệu --</option>
                     {materials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Qty</label>
-                  <input type="number" className="border p-2 rounded w-24 text-sm" value={item.quantity} onChange={e => {
+                  <label className="block text-xs text-gray-500 mb-1">Số lượng</label>
+                  <input type="number" className="border border-gray-200 p-2 rounded-lg w-24 text-sm" value={item.quantity} onChange={e => {
                     const newItems = [...items]; newItems[idx].quantity = Number(e.target.value); setItems(newItems);
                   }} />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Unit</label>
-                  <select className="border p-2 rounded w-20 text-sm" value={item.unit} onChange={e => {
+                  <label className="block text-xs text-gray-500 mb-1">Đơn vị</label>
+                  <select className="border border-gray-200 p-2 rounded-lg w-20 text-sm" value={item.unit} onChange={e => {
                     const newItems = [...items]; newItems[idx].unit = e.target.value; setItems(newItems);
                   }}>
                     <option value="g">g</option>
                     <option value="kg">kg</option>
                     <option value="ml">ml</option>
                     <option value="l">L</option>
-                    <option value="pc">pc</option>
+                    <option value="pc">cái</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Waste %</label>
-                  <input type="number" className="border p-2 rounded w-24 text-sm" value={item.wastePercent} onChange={e => {
+                  <label className="block text-xs text-gray-500 mb-1">Hao hụt %</label>
+                  <input type="number" className="border border-gray-200 p-2 rounded-lg w-24 text-sm" value={item.wastePercent} onChange={e => {
                     const newItems = [...items]; newItems[idx].wastePercent = Number(e.target.value); setItems(newItems);
                   }} />
                 </div>
               </div>
             ))}
-            <button type="button" onClick={addItemRow} className="text-sm text-blue-600 font-medium mt-2">+ Add Ingredient</button>
+            <button type="button" onClick={addItemRow} className="text-sm text-[#D96C4E] font-medium mt-1 hover:underline">
+              + Thêm nguyên liệu
+            </button>
           </div>
-          
+
           <div>
-            <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700">Save Recipe</button>
+            <button type="submit" className="bg-[#D96C4E] hover:bg-[#C55A3D] text-white px-6 py-2 rounded-lg font-medium transition-colors">
+              Lưu công thức
+            </button>
           </div>
         </form>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        <h2 className="text-lg font-semibold text-gray-700 p-6 border-b">Saved Recipes</h2>
+      <div className="bg-white rounded-xl border border-[#E5D5C5] shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-[#E5D5C5]">
+          <h2 className="font-semibold text-[#40332B]">Danh sách công thức đã lưu</h2>
+        </div>
         {loading ? (
-          <div className="p-8 text-center text-gray-500">Loading recipes...</div>
+          <div className="p-8 text-center text-gray-500">Đang tải...</div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-600 border-b text-sm">
-                <th className="p-4 font-medium">Product ID</th>
-                <th className="p-4 font-medium">v#</th>
-                <th className="p-4 font-medium">Name</th>
-                <th className="p-4 font-medium">Std Yield</th>
-                <th className="p-4 font-medium">Ingredients</th>
+          <table className="w-full text-left">
+            <thead className="bg-[#FFFBF5] text-[#5C4D43] text-sm border-b border-[#E5D5C5]">
+              <tr>
+                <th className="p-4 font-medium">Sản phẩm</th>
+                <th className="p-4 font-medium">Phiên bản</th>
+                <th className="p-4 font-medium">Tên công thức</th>
+                <th className="p-4 font-medium">Số lượng ra lò</th>
+                <th className="p-4 font-medium">Số nguyên liệu</th>
               </tr>
             </thead>
-            <tbody className="divide-y text-sm">
+            <tbody className="divide-y divide-[#E5D5C5] text-sm">
               {recipes.map(r => (
-                <tr key={r.id}>
-                  <td className="p-4">{r.productId}</td>
+                <tr key={r.id} className="hover:bg-gray-50">
+                  <td className="p-4 text-gray-600">{r.product?.name || r.productId}</td>
                   <td className="p-4">v{r.versionNo}</td>
                   <td className="p-4 font-medium">{r.name}</td>
-                  <td className="p-4">{r.yieldQuantity} pcs</td>
-                  <td className="p-4 text-gray-500">{r.items?.length} items mapped</td>
+                  <td className="p-4">{r.yieldQuantity} cái</td>
+                  <td className="p-4 text-gray-500">{r.items?.length} nguyên liệu</td>
                 </tr>
               ))}
+              {recipes.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-gray-500">Chưa có công thức nào.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         )}
