@@ -67,12 +67,19 @@ export default function RecipesDashboard() {
             <div>
               <label className="block text-sm text-gray-600 mb-1">Sản phẩm</label>
               <select
-                className="border border-gray-200 p-2 rounded-lg w-56 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
+                className="border border-gray-200 p-2 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
                 value={productId} onChange={e => setProductId(e.target.value)}
               >
                 <option value="">-- Chọn sản phẩm --</option>
-                {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                {products.map(p => (
+                  <option key={p.id} value={p.id}>
+                    [{p.productCode}] {p.name}
+                  </option>
+                ))}
               </select>
+              {products.length === 0 && (
+                <p className="text-xs text-amber-600 mt-1">Chưa có sản phẩm. Hãy tạo sản phẩm trong mục <strong>Sản phẩm</strong> trước.</p>
+              )}
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">Tên công thức</label>
@@ -160,7 +167,14 @@ export default function RecipesDashboard() {
             <tbody className="divide-y divide-[#E5D5C5] text-sm">
               {recipes.map(r => (
                 <tr key={r.id} className="hover:bg-gray-50">
-                  <td className="p-4 text-gray-600">{r.product?.name || r.productId}</td>
+                  <td className="p-4 text-gray-600">
+                    {r.product ? (
+                      <span>
+                        <span className="text-xs font-mono bg-gray-100 px-1 rounded mr-1">{r.product.productCode}</span>
+                        {r.product.name}
+                      </span>
+                    ) : r.productId}
+                  </td>
                   <td className="p-4">v{r.versionNo}</td>
                   <td className="p-4 font-medium">{r.name}</td>
                   <td className="p-4">{r.yieldQuantity} cái</td>
