@@ -24,18 +24,24 @@ model User {
 }
 
 model Product {
-  id          String      @id @default(cuid())
-  productCode String      @unique
-  name        String
-  description String
-  imageUrl    String?
-  salePrice   Decimal     @db.Decimal(12, 0)
-  isActive    Boolean     @default(true)
-  isFeatured  Boolean     @default(false)
-  sortOrder   Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  orderItems  OrderItem[]
+  id                    String      @id @default(cuid())
+  productCode           String      @unique
+  name                  String
+  description           String
+  imageUrl              String?
+  salePrice             Decimal     @db.Decimal(12, 0)
+  targetMarginPercent   Decimal?    @db.Decimal(5, 2)
+  defaultYield          Int?
+  packagingCostDefault  Decimal?    @db.Decimal(12, 2)
+  overheadCostDefault   Decimal?    @db.Decimal(12, 2)
+  isActive              Boolean     @default(true)
+  isFeatured            Boolean     @default(false)
+  sortOrder             Int         @default(0)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  orderItems            OrderItem[]
+  recipeVersions        RecipeVersion[]
+  productionBatches     ProductionBatch[]
 
   @@index([isActive])
   @@index([productCode])
@@ -145,4 +151,179 @@ enum DeliveryStatus {
 enum DiscountType {
   PERCENTAGE
   FIXED_AMOUNT
+}
+
+// ----------------------------------------------------------------------------
+// COSTING & PRODUCTION SCHEMAS
+// ----------------------------------------------------------------------------
+
+model Material {
+  id               String   @id @default(cuid())
+  code             String   @unique
+  name             String
+  category         String?
+  baseUnit         String   // g, qua, cai, hop...
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  purchaseItems    PurchaseItem[]
+  costSnapshots    MaterialCostSnapshot[]
+  recipeItems      RecipeItem[]
+  batchItems       ProductionBatchItem[]
+  
+  @@index([isActive])
+  @@index([code])
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String?
+  address     String?
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  purchases   Purchase[]
+}
+
+model Purchase {
+  id            String         @id @default(cuid())
+  supplierId    String?
+  supplier      Supplier?      @relation(fields: [supplierId], references: [id])
+  purchaseDate  DateTime
+  source        String?        // manual, imported_bill, etc
+  invoiceNo     String?
+  note          String?
+  totalAmount   Decimal?       @db.Decimal(12, 2)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  items         PurchaseItem[]
+}
+
+model PurchaseItem {
+  id              String   @id @default(cuid())
+  purchaseId      String
+  purchase        Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  materialId      String
+  material        Material @relation(fields: [materialId], references: [id])
+
+  itemNameRaw     String?
+  brand           String?
+  packSizeText    String?  // ví dụ: 500g, 1kg
+  quantity        Decimal  @db.Decimal(12, 3) // số lượng mua
+  unit            String   // g, kg, qua, goi...
+  conversionRate  Decimal? @db.Decimal(12, 4) // đổi về base unit nếu cần
+  quantityBase    Decimal  @db.Decimal(12, 3) // số lượng theo đơn vị chuẩn
+  amount          Decimal  @db.Decimal(12, 2)
+  unitCostBase    Decimal  @db.Decimal(12, 4) // giá theo base unit
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([purchaseId])
+  @@index([materialId])
+}
+
+model MaterialCostSnapshot {
+  id             String   @id @default(cuid())
+  materialId     String
+  material       Material @relation(fields: [materialId], references: [id])
+
+  costMethod     String   // latest, weighted_average, manual
+  unitCost       Decimal  @db.Decimal(12, 4)
+  effectiveAt    DateTime
+  note           String?
+
+  createdAt      DateTime @default(now())
+  
+  @@index([materialId])
+}
+
+model RecipeVersion {
+  id             String      @id @default(cuid())
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  versionNo      Int
+  name           String?
+  yieldQuantity  Int
+  isDefault      Boolean     @default(false)
+  note           String?
+  createdAt      DateTime    @default(now())
+
+  items          RecipeItem[]
+  productionBatches ProductionBatch[]
+
+  @@unique([productId, versionNo])
+}
+
+model RecipeItem {
+  id               String        @id @default(cuid())
+  recipeVersionId  String
+  recipeVersion    RecipeVersion @relation(fields: [recipeVersionId], references: [id], onDelete: Cascade)
+
+  materialId       String
+  material         Material      @relation(fields: [materialId], references: [id])
+
+  quantity         Decimal       @db.Decimal(12, 3)
+  unit             String
+  wastePercent     Decimal?      @db.Decimal(5, 2)
+  note             String?
+
+  createdAt        DateTime      @default(now())
+  
+  @@index([recipeVersionId])
+  @@index([materialId])
+}
+
+model ProductionBatch {
+  id                  String   @id @default(cuid())
+  productId           String
+  product             Product  @relation(fields: [productId], references: [id])
+
+  recipeVersionId     String?
+  recipeVersion       RecipeVersion? @relation(fields: [recipeVersionId], references: [id])
+
+  batchDate           DateTime
+  batchCode           String?  @unique
+  plannedYield        Int?
+  actualYield         Int
+  packagingCost       Decimal? @db.Decimal(12, 2)
+  overheadCost        Decimal? @db.Decimal(12, 2)
+
+  totalMaterialCost   Decimal? @db.Decimal(12, 2)
+  totalBatchCost      Decimal? @db.Decimal(12, 2)
+  unitCost            Decimal? @db.Decimal(12, 2)
+
+  note                String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  items               ProductionBatchItem[]
+  
+  @@index([productId])
+}
+
+model ProductionBatchItem {
+  id                String          @id @default(cuid())
+  productionBatchId String
+  productionBatch   ProductionBatch @relation(fields: [productionBatchId], references: [id], onDelete: Cascade)
+
+  materialId        String
+  material          Material        @relation(fields: [materialId], references: [id])
+
+  quantity          Decimal         @db.Decimal(12, 3)
+  unit              String
+  unitCostUsed      Decimal         @db.Decimal(12, 4)
+  lineCost          Decimal         @db.Decimal(12, 2)
+  sourceMethod      String?         // latest, weighted_average, manual
+
+  createdAt         DateTime        @default(now())
+  
+  @@index([productionBatchId])
+  @@index([materialId])
 }

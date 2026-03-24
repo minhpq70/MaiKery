@@ -18,6 +18,13 @@ export default async function AdminProductsPage(props: {
       ],
     },
     orderBy: { createdAt: "desc" },
+    include: {
+      productionBatches: {
+        orderBy: { batchDate: "desc" },
+        take: 1,
+        select: { unitCost: true }
+      }
+    }
   });
 
   return (
@@ -57,6 +64,7 @@ export default async function AdminProductsPage(props: {
                 <th className="px-6 py-4">Sản phẩm</th>
                 <th className="px-6 py-4">Mã SP</th>
                 <th className="px-6 py-4">Giá bán</th>
+                <th className="px-6 py-4">Giá vốn / Lợi nhuận</th>
                 <th className="px-6 py-4">Trạng thái</th>
                 <th className="px-6 py-4 text-right">Thao tác</th>
               </tr>
@@ -91,6 +99,23 @@ export default async function AdminProductsPage(props: {
                     </td>
                     <td className="px-6 py-4 font-bold text-[#D96C4E]">
                       {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(product.salePrice))}
+                    </td>
+                    <td className="px-6 py-4">
+                      {(() => {
+                        const cost = product.productionBatches[0]?.unitCost;
+                        if (!cost) return <span className="text-gray-400 italic text-xs">Chưa có Batch</span>;
+                        const margin = ((Number(product.salePrice) - Number(cost)) / Number(product.salePrice)) * 100;
+                        return (
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-gray-800">
+                              {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(cost))}
+                            </span>
+                            <span className={`text-xs font-bold ${margin > 50 ? 'text-green-600' : margin > 20 ? 'text-yellow-600' : 'text-red-500'}`}>
+                              {margin.toFixed(1)}% Lợi nhuận
+                            </span>
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
