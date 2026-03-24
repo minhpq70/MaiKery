@@ -11,7 +11,11 @@ import {
   Users, 
   TicketPercent,
   LogOut,
-  CircleDollarSign
+  CircleDollarSign,
+  FlaskConical,
+  ShoppingBag,
+  BookOpen,
+  Layers,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -23,6 +27,13 @@ const navItems = [
   { name: "Mã giảm giá", href: "/admin/discounts", icon: TicketPercent },
   { name: "Tài khoản", href: "/admin/users", icon: Users },
   { name: "Cài đặt", href: "/admin/settings", icon: Settings },
+];
+
+const costingItems = [
+  { name: "Nguyên liệu", href: "/admin/costing/materials", icon: FlaskConical },
+  { name: "Nhập hàng", href: "/admin/costing/purchases", icon: ShoppingBag },
+  { name: "Công thức", href: "/admin/costing/recipes", icon: BookOpen },
+  { name: "Lô sản xuất", href: "/admin/costing/batches", icon: Layers },
 ];
 
 export function Sidebar() {
@@ -39,12 +50,11 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <div className="flex-1 py-6">
+      <div className="flex-1 py-6 overflow-y-auto">
         <nav className="space-y-1 px-3">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/admin");
             const Icon = item.icon;
-            
             return (
               <Link
                 key={item.href}
@@ -52,6 +62,31 @@ export function Sidebar() {
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   isActive 
                     ? "bg-[#D96C4E] text-white" 
+                    : "text-gray-300 hover:bg-[#5C4D43] hover:text-white"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="font-medium">{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="mt-4 mx-3 border-t border-[#5C4D43]" />
+        <p className="px-6 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">
+          Tính giá thành
+        </p>
+        <nav className="space-y-1 px-3">
+          {costingItems.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-[#D96C4E] text-white"
                     : "text-gray-300 hover:bg-[#5C4D43] hover:text-white"
                 }`}
               >
