@@ -26,12 +26,10 @@ export default async function DeliveryPage() {
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#40332B] mb-6">Chính sách giao hàng</h1>
         <div className="h-1 w-20 bg-[#D96C4E] mx-auto rounded-full"></div>
       </div>
-      <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed">
-        {isHtml
-          ? <div dangerouslySetInnerHTML={{ __html: content }} />
-          : paragraphs!.map((para, i) => <p key={i}>{para}</p>)
-        }
-      </div>
+      {isHtml
+        ? <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed" dangerouslySetInnerHTML={{ __html: content }} />
+        : <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed">{paragraphs!.map((para, i) => <p key={i}>{para}</p>)}</div>
+      }
     </div>
   );
 }
