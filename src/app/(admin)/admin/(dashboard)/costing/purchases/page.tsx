@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, X, ChevronDown } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, X } from "lucide-react";
+
+const UNIT_SUGGESTIONS = [
+  "g", "kg", "ml", "L", "cái", "quả", "gói", "hộp", "túi", "lon",
+  "bánh", "tờ", "cuộn", "chai", "lọ", "bịch", "bình", "thùng",
+];
 
 export default function PurchasesDashboard() {
   const [purchases, setPurchases] = useState<any[]>([]);
@@ -20,9 +25,23 @@ export default function PurchasesDashboard() {
   const [newSupplierPhone, setNewSupplierPhone] = useState("");
   const [savingSupplier, setSavingSupplier] = useState(false);
 
+  // Track which item row has units suggestion open
+  const [openUnitSuggest, setOpenUnitSuggest] = useState<number | null>(null);
+
   const [items, setItems] = useState<any[]>([
     { materialId: "", itemNameRaw: "", quantity: 1, unit: "kg", amount: 0, conversionRate: 1000 }
   ]);
+
+  // Group materials by category for optgroup display
+  const materialsByCategory = useMemo(() => {
+    const groups: Record<string, any[]> = {};
+    for (const m of materials) {
+      const cat = m.category || "Khác";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(m);
+    }
+    return groups;
+  }, [materials]);
 
   useEffect(() => {
     fetchData();
@@ -225,19 +244,28 @@ export default function PurchasesDashboard() {
             {items.map((item, index) => (
               <div key={index} className="flex gap-2 items-end mb-3 flex-wrap">
                 <div className="flex-1 min-w-[180px]">
-                  <label className="block text-xs text-gray-500 mb-1">Nguyên liệu</label>
+                  <label className="block text-xs text-gray-500 mb-1">Hàng hóa / Vật tư</label>
                   <select
                     className="border border-gray-200 p-2 rounded-lg w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
                     value={item.materialId}
                     onChange={e => {
                       const newItems = [...items];
                       newItems[index].materialId = e.target.value;
+                      // Auto-fill unit from selected material's baseUnit
+                      const selected = materials.find((m: any) => m.id === e.target.value);
+                      if (selected?.baseUnit) {
+                        newItems[index].unit = selected.baseUnit;
+                      }
                       setItems(newItems);
                     }}
                   >
-                    <option value="">-- Chọn nguyên liệu --</option>
-                    {materials.map(m => (
-                      <option key={m.id} value={m.id}>{m.name} ({m.baseUnit})</option>
+                    <option value="">-- Chọn hàng hóa --</option>
+                    {Object.entries(materialsByCategory).map(([cat, mats]) => (
+                      <optgroup key={cat} label={cat}>
+                        {(mats as any[]).map(m => (
+                          <option key={m.id} value={m.id}>{m.name} ({m.baseUnit})</option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </div>
@@ -247,11 +275,39 @@ export default function PurchasesDashboard() {
                     const newItems = [...items]; newItems[index].quantity = e.target.value; setItems(newItems);
                   }} />
                 </div>
-                <div>
+                <div className="relative">
                   <label className="block text-xs text-gray-500 mb-1">Đơn vị mua</label>
-                  <input type="text" className="border border-gray-200 p-2 rounded-lg w-20 text-sm" placeholder="VD: túi" value={item.unit} onChange={e => {
-                    const newItems = [...items]; newItems[index].unit = e.target.value; setItems(newItems);
-                  }} />
+                  <input
+                    type="text"
+                    className="border border-gray-200 p-2 rounded-lg w-24 text-sm focus:outline-none focus:ring-2 focus:ring-[#D96C4E]"
+                    placeholder="VD: túi"
+                    value={item.unit}
+                    onChange={e => {
+                      const newItems = [...items]; newItems[index].unit = e.target.value; setItems(newItems);
+                    }}
+                    onFocus={() => setOpenUnitSuggest(index)}
+                    onBlur={() => setTimeout(() => setOpenUnitSuggest(null), 150)}
+                  />
+                  {openUnitSuggest === index && (
+                    <div className="absolute top-full left-0 mt-1 z-10 bg-white border border-[#E5D5C5] rounded-lg p-2 flex flex-wrap gap-1 shadow-md min-w-[200px]">
+                      {UNIT_SUGGESTIONS.map(u => (
+                        <button
+                          key={u}
+                          type="button"
+                          onMouseDown={e => {
+                            e.preventDefault();
+                            const newItems = [...items];
+                            newItems[index].unit = u;
+                            setItems(newItems);
+                            setOpenUnitSuggest(null);
+                          }}
+                          className={`px-2 py-0.5 rounded-full text-xs border transition-colors ${item.unit === u ? "bg-[#D96C4E] text-white border-[#D96C4E]" : "border-gray-200 text-gray-600 hover:border-[#D96C4E] hover:text-[#D96C4E]"}`}
+                        >
+                          {u}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">Quy đổi *</label>
