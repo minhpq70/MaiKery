@@ -22,6 +22,7 @@ export default async function AboutPage() {
   const page = await prisma.pageContent.findUnique({ where: { slug: "about" } });
   const content = page?.content ?? DEFAULT_CONTENT;
   const isHtml = content.trimStart().startsWith("<");
+  const displayContent = isHtml ? content.replace(/<p><\/p>/g, "<p><br></p>") : null;
   const paragraphs = isHtml ? null : content.split(/\n\n+/);
 
   return (
@@ -31,7 +32,7 @@ export default async function AboutPage() {
         <div className="h-1 w-20 bg-[#D96C4E] mx-auto rounded-full"></div>
       </div>
       {isHtml
-        ? <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed" dangerouslySetInnerHTML={{ __html: content }} />
+        ? <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed" dangerouslySetInnerHTML={{ __html: displayContent! }} />
         : <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed">{paragraphs!.map((para, i) => <p key={i}>{para}</p>)}</div>
       }
     </div>
