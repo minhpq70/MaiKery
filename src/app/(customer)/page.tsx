@@ -96,7 +96,7 @@ export default async function HomePage() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
               </div>
               <h3 className="text-xl font-bold text-[#40332B] mb-3">Làm bằng cả trái tim</h3>
-              <p className="text-[#5C4D43]">Mỗi chiếc bánh MaiKery là một tác phẩm nghệ thuật, được trau chuốt tỉ mỉ từ những người thợ làm bánh.</p>
+              <p className="text-[#5C4D43]">Mỗi chiếc bánh MaiKery là một tác phẩm nghệ thuật, được trau chuốt tỉ mỉ từ Mai - người thợ làm bánh.</p>
             </div>
           </div>
         </div>
