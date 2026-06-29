@@ -17,7 +17,8 @@ Bánh là sản phẩm tươi, vui lòng nhận hàng và bảo quản ngay sau 
 export default async function DeliveryPage() {
   const page = await prisma.pageContent.findUnique({ where: { slug: "delivery" } });
   const content = page?.content ?? DEFAULT_CONTENT;
-  const paragraphs = content.split(/\n\n+/);
+  const isHtml = content.trimStart().startsWith("<");
+  const paragraphs = isHtml ? null : content.split(/\n\n+/);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 max-w-4xl">
@@ -26,9 +27,10 @@ export default async function DeliveryPage() {
         <div className="h-1 w-20 bg-[#D96C4E] mx-auto rounded-full"></div>
       </div>
       <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed">
-        {paragraphs.map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
+        {isHtml
+          ? <div dangerouslySetInnerHTML={{ __html: content }} />
+          : paragraphs!.map((para, i) => <p key={i}>{para}</p>)
+        }
       </div>
     </div>
   );
