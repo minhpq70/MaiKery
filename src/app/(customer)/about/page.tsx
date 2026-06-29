@@ -8,25 +8,31 @@ export default function AboutPage() {
       
       <div className="prose prose-stone lg:prose-lg mx-auto text-[#5C4D43] font-serif leading-relaxed">
         <p>
-          Chào mừng bạn đến với MaiKery - Tiệm bánh nhỏ ngập tràn tình yêu thương! 
+          Chuyện về một nàng thiếu nữ tên Mai.
         </p>
         <p>
-          Khởi nguồn từ một căn bếp nhỏ vào năm 2023, MaiKery được sinh ra mang theo giấc mơ tạo nên những chiếc bánh không chỉ đạt chuẩn về hình thức, mà còn lay động vị giác ngay từ miếng cắn đầu tiên. 
+          Nàng từng có nhiều năm sống ở Đức – nơi những căn bếp gia đình không chỉ là chỗ nấu ăn, mà là không gian của ký ức, của sự kiên nhẫn và tình yêu được truyền qua nhiều thế hệ. Ở đó, nàng học được rằng làm bánh không đơn thuần là pha trộn các nguyên liệu với nhau, mà là một hình thức kể chuyện – bằng mùi hương, kết cấu và cảm xúc.
         </p>
         <p>
-          Chúng tôi tin rằng ẩm thực là một loại ngôn ngữ kì diệu. Một chiếc bánh ngon có thể xua tan mệt mỏi, gửi gắm lời yêu thương khó nói, hay đơn giản là tự thưởng cho bản thân sau một ngày dài vất vả.
+          Những người phụ nữ Đức lớn tuổi đã dạy nàng những công thức cổ điển, những bí quyết nhỏ bé nhưng tinh tế, và trên hết là triết lý làm bánh bằng sự trân trọng: trân trọng nguyên liệu, trân trọng thời gian chờ đợi, và trân trọng người sẽ thưởng thức chiếc bánh ấy.
         </p>
-        <h3 className="text-2xl font-bold text-[#8C3D2B] mt-10 mb-4">Triết Lý Của Chúng Tôi</h3>
-        <ul>
-          <li><strong>Nguyên liệu thượng hạng:</strong> Bơ lạt xuất xứ từ Pháp, chocolate Bỉ 70%, bột mì đặc dụng cao cấp... Chúng tôi không bao giờ thoả hiệp với chất lượng nguyên liệu.</li>
-          <li><strong>Tươi mới mỗi ngày:</strong> Bánh tại MaiKery luôn được ra lò liên tục mỗi 4 giờ và bán hết trong ngày.</li>
-          <li><strong>Không chất bảo quản:</strong> Tôn trọng sự nguyên bản và tự nhiên nhất, chúng tôi tuyệt đối nói không với bất kì loại chất bảo quản công nghiệp nào.</li>
-        </ul>
         <p>
-          Mỗi chiếc bánh là một tác phẩm nghệ thuật thu nhỏ được những người thợ làm bánh tại MaiKery nhào nặn bằng thủ công, gửi gắm toàn bộ tâm huyết và sự tận tuỵ.
+          Khi về nước, nàng mang theo tình yêu dành cho những "tác phẩm nghệ thuật" từ căn bếp nhỏ. Ban đầu, đó chỉ là những chiếc bánh làm cho bạn bè, cho những buổi gặp gỡ thân tình. Nhưng rồi, niềm vui nhìn thấy người khác mỉm cười khi thưởng thức những miếng bánh đầu tiên đã thôi thúc nàng đi xa hơn – muốn được chia sẻ nhiều hơn.
         </p>
-        <p className="text-xl font-bold text-[#D96C4E] mt-10 italic text-center">
-          "Cảm ơn bạn đã ghé thăm MaiKery. Chúc bạn có một ngày thật ngọt ngào!"
+        <p>
+          MaiKery ra đời từ mong muốn giản dị ấy: đem tình yêu cùng tinh thần thủ công học được từ Đức gửi gắm vào từng chiếc bánh nhỏ bé.
+        </p>
+        <p>
+          Ngày ý tưởng MaiKery được hình thành là ngày đầu tiên của năm 2026, một cột mốc đáng nhớ trong cuộc đời nàng (!). Một khởi đầu mới, chậm rãi nhưng vững vàng, nơi nàng chọn làm bánh với sự nghiêm túc và trân trọng của một người luôn lấy sự chỉn chu làm kim chỉ nam trong từng việc nhỏ.
+        </p>
+        <p>
+          MaiKery không hướng đến sản xuất hàng loạt. MaiKery chọn làm bánh vừa đủ – đủ để giữ trọn chất lượng, đủ để mỗi chiếc bánh vẫn mang hơi ấm của căn bếp nhà, đủ để người nhận cảm thấy mình được quan tâm và yêu thương.
+        </p>
+        <p>
+          Với MaiKery, mỗi chiếc bánh không chỉ để ăn, mà để cảm. Và MaiKery ra đời để những cảm xúc ấy được lan tỏa – nhẹ nhàng, tinh tế, và chân thành.
+        </p>
+        <p className="font-bold text-[#40332B] mt-10 italic text-center">
+          MaiKery – bánh từ căn bếp của Mai, thương gửi đến bạn!
         </p>
       </div>
     </div>

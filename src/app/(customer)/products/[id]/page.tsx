@@ -33,22 +33,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {product.description || "Chưa có mô tả chi tiết cho sản phẩm này."}
           </div>
           
-          <div className="bg-[#FFFBF5] rounded-2xl p-6 border border-[#F2E8D9] mb-8">
-            <ul className="space-y-3 text-sm text-[#5C4D43]">
-              <li className="flex items-center gap-3">
-                <svg className="text-[#D96C4E]" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
-                Nướng mới mỗi 4 giờ
-              </li>
-              <li className="flex items-center gap-3">
-                <svg className="text-[#D96C4E]" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Không chất bảo quản
-              </li>
-              <li className="flex items-center gap-3">
-                <svg className="text-[#D96C4E]" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                Giao hàng hoả tốc TP.HCM
-              </li>
-            </ul>
-          </div>
 
           <AddToCartButton product={product} />
         </div>

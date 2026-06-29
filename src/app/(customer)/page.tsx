@@ -17,7 +17,7 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-tr from-[#8C3D2B] to-[#D96C4E] opacity-70"></div>
         <div className="relative z-20 text-center text-white px-4 max-w-3xl">
           <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 tracking-tight drop-shadow-lg">
-            Hương Vị Từ Trái Tim
+            Hương vị từ trái tim
           </h1>
           <p className="text-xl md:text-2xl mb-10 text-[#FFFBF5] font-light max-w-2xl mx-auto drop-shadow-md">
             Khám phá thế giới bánh thủ công tại MaiKery, nơi nghệ thuật làm bánh thăng hoa cùng nguyên liệu thượng hạng.
@@ -81,21 +81,21 @@ export default async function HomePage() {
               <div className="w-16 h-16 bg-[#FFFBF5] rounded-full flex items-center justify-center text-[#D96C4E] mb-6 shadow-sm border border-[#F2E8D9]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
-              <h3 className="text-xl font-bold text-[#40332B] mb-3">Chất Lượng Thượng Hạng</h3>
-              <p className="text-[#5C4D43]">Sử dụng bơ lạt nguyên chất, bột mì Pháp và chocolate Bỉ để tạo nên hương vị khác biệt.</p>
+              <h3 className="text-xl font-bold text-[#40332B] mb-3">Chất lượng thượng hạng</h3>
+              <p className="text-[#5C4D43]">Sử dụng nguyên vật liệu nguyên chât (bơ, bột mì, chocolate …) để tạo nên hương vị khác biệt.</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 bg-[#FFFBF5] rounded-full flex items-center justify-center text-[#D96C4E] mb-6 shadow-sm border border-[#F2E8D9]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
-              <h3 className="text-xl font-bold text-[#40332B] mb-3">100% An Toàn</h3>
+              <h3 className="text-xl font-bold text-[#40332B] mb-3">100% An toàn</h3>
               <p className="text-[#5C4D43]">Không sử dụng chất bảo quản, luôn đảm bảo độ tươi mới khi bánh đến tay bạn.</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 bg-[#FFFBF5] rounded-full flex items-center justify-center text-[#D96C4E] mb-6 shadow-sm border border-[#F2E8D9]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
               </div>
-              <h3 className="text-xl font-bold text-[#40332B] mb-3">Làm Bằng Cả Trái Tim</h3>
+              <h3 className="text-xl font-bold text-[#40332B] mb-3">Làm bằng cả trái tim</h3>
               <p className="text-[#5C4D43]">Mỗi chiếc bánh MaiKery là một tác phẩm nghệ thuật, được trau chuốt tỉ mỉ từ những người thợ làm bánh.</p>
             </div>
           </div>
