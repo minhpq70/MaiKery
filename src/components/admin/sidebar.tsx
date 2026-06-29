@@ -3,12 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Settings, 
-  Users, 
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  Settings,
+  Users,
   TicketPercent,
   LogOut,
   CircleDollarSign,
@@ -16,6 +16,7 @@ import {
   ShoppingBag,
   BookOpen,
   Layers,
+  FileText,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -26,6 +27,7 @@ const navItems = [
   { name: "Đơn hàng", href: "/admin/orders", icon: ShoppingCart },
   { name: "Mã giảm giá", href: "/admin/discounts", icon: TicketPercent },
   { name: "Tài khoản", href: "/admin/users", icon: Users },
+  { name: "Nội dung trang", href: "/admin/pages", icon: FileText },
   { name: "Cài đặt", href: "/admin/settings", icon: Settings },
 ];
 

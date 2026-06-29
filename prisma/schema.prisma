@@ -125,6 +125,12 @@ model SiteSettings {
   updatedAt     DateTime @updatedAt
 }
 
+model PageContent {
+  slug      String   @id  // "about", "terms", "privacy", "delivery"
+  content   String
+  updatedAt DateTime @updatedAt
+}
+
 model test {
   id Int @id @default(autoincrement())
 }
