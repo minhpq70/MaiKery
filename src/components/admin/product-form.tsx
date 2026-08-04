@@ -15,6 +15,12 @@ export function ProductForm({ product }: { product?: Product }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ảnh không được lớn hơn 5 MB.");
+      e.target.value = "";
+      return;
+    }
+
     setIsUploading(true);
     try {
       const formData = new FormData();
@@ -36,6 +42,7 @@ export function ProductForm({ product }: { product?: Product }) {
       alert("Đã xảy ra lỗi khi upload.");
     } finally {
       setIsUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -114,13 +121,13 @@ export function ProductForm({ product }: { product?: Product }) {
               {isUploading ? "Đang tải ảnh..." : "Chọn ảnh từ máy"}
               <input 
                 type="file" 
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 onChange={handleFileUpload}
                 disabled={isUploading}
                 className="hidden" 
               />
             </label>
-            <span className="text-xs text-gray-500 hidden md:inline">Hoặc điền URL bên dưới:</span>
+            <span className="text-xs text-gray-500 hidden md:inline">JPG, PNG, WebP hoặc GIF — tối đa 5 MB</span>
           </div>
 
           <input 

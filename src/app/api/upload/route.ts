@@ -1,8 +1,47 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { randomUUID } from "crypto";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+
+export const runtime = "nodejs";
+
+const BUCKET = "product-images";
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_TYPES = new Map([
+  ["image/jpeg", "jpg"],
+  ["image/png", "png"],
+  ["image/webp", "webp"],
+  ["image/gif", "gif"],
+]);
+
+async function ensurePublicBucket(supabaseUrl: string, serviceRoleKey: string) {
+  const response = await fetch(`${supabaseUrl}/storage/v1/bucket/${BUCKET}`, {
+    headers: {
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
+    },
+    cache: "no-store",
+  });
+
+  if (response.ok) return;
+  if (response.status !== 404) {
+    throw new Error(`Không thể kiểm tra Supabase bucket (${response.status})`);
+  }
+
+  const createResponse = await fetch(`${supabaseUrl}/storage/v1/bucket`, {
+    method: "POST",
+    headers: {
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id: BUCKET, name: BUCKET, public: true }),
+  });
+
+  if (!createResponse.ok && createResponse.status !== 409) {
+    throw new Error(`Không thể tạo Supabase bucket (${createResponse.status})`);
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -11,28 +50,66 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
+    const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!file) {
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
+      return NextResponse.json(
+        { error: "Chưa cấu hình Supabase Storage trên máy chủ" },
+        { status: 500 },
+      );
+    }
+
+    const formData = await req.formData();
+    const file = formData.get("file");
+
+    if (!(file instanceof File) || file.size === 0) {
       return NextResponse.json({ error: "Không tìm thấy file" }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const extension = ALLOWED_TYPES.get(file.type);
+    if (!extension) {
+      return NextResponse.json(
+        { error: "Chỉ hỗ trợ ảnh JPG, PNG, WebP hoặc GIF" },
+        { status: 400 },
+      );
+    }
 
-    // Save to public/uploads
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "Ảnh không được lớn hơn 5 MB" },
+        { status: 400 },
+      );
+    }
 
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const ext = path.extname(file.name);
-    const filename = `${uniqueSuffix}${ext}`;
-    
-    await writeFile(path.join(uploadDir, filename), buffer);
+    await ensurePublicBucket(supabaseUrl, serviceRoleKey);
 
-    const imageUrl = `/uploads/${filename}`;
+    const objectPath = `products/${randomUUID()}.${extension}`;
+    const uploadResponse = await fetch(
+      `${supabaseUrl}/storage/v1/object/${BUCKET}/${objectPath}`,
+      {
+        method: "POST",
+        headers: {
+          apikey: serviceRoleKey,
+          Authorization: `Bearer ${serviceRoleKey}`,
+          "Content-Type": file.type,
+          "x-upsert": "false",
+        },
+        body: Buffer.from(await file.arrayBuffer()),
+      },
+    );
 
+    if (!uploadResponse.ok) {
+      const details = await uploadResponse.text();
+      console.error("Supabase upload error:", uploadResponse.status, details);
+      return NextResponse.json(
+        { error: "Supabase từ chối tải ảnh. Vui lòng kiểm tra cấu hình Storage." },
+        { status: 502 },
+      );
+    }
+
+    const imageUrl = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${objectPath}`;
     return NextResponse.json({ success: true, url: imageUrl }, { status: 201 });
   } catch (error: unknown) {
     console.error("Upload error:", error);
