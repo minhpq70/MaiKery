@@ -14,12 +14,27 @@ const ALLOWED_TYPES = new Map([
   ["image/gif", "gif"],
 ]);
 
+function normalizeSupabaseUrl(value: string) {
+  const trimmed = value.trim().replace(/\/$/, "");
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed.endsWith(".supabase.co") ? trimmed : `${trimmed}.supabase.co`}`;
+}
+
+function storageHeaders(apiKey: string, contentType?: string) {
+  const headers: Record<string, string> = { apikey: apiKey };
+
+  // Legacy service_role is a JWT and needs the Bearer header. New sb_secret
+  // keys must not be sent as a Bearer token; Supabase accepts them via apikey.
+  if (!apiKey.startsWith("sb_")) {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+  if (contentType) headers["Content-Type"] = contentType;
+  return headers;
+}
+
 async function ensurePublicBucket(supabaseUrl: string, serviceRoleKey: string) {
   const response = await fetch(`${supabaseUrl}/storage/v1/bucket/${BUCKET}`, {
-    headers: {
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-    },
+    headers: storageHeaders(serviceRoleKey),
     cache: "no-store",
   });
 
@@ -30,11 +45,7 @@ async function ensurePublicBucket(supabaseUrl: string, serviceRoleKey: string) {
 
   const createResponse = await fetch(`${supabaseUrl}/storage/v1/bucket`, {
     method: "POST",
-    headers: {
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-      "Content-Type": "application/json",
-    },
+    headers: storageHeaders(serviceRoleKey, "application/json"),
     body: JSON.stringify({ id: BUCKET, name: BUCKET, public: true }),
   });
 
@@ -50,16 +61,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
+    const configuredSupabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (!configuredSupabaseUrl || !serviceRoleKey) {
       console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
       return NextResponse.json(
         { error: "Chưa cấu hình Supabase Storage trên máy chủ" },
         { status: 500 },
       );
     }
+
+    const supabaseUrl = normalizeSupabaseUrl(configuredSupabaseUrl);
 
     const formData = await req.formData();
     const file = formData.get("file");
@@ -91,9 +104,7 @@ export async function POST(req: Request) {
       {
         method: "POST",
         headers: {
-          apikey: serviceRoleKey,
-          Authorization: `Bearer ${serviceRoleKey}`,
-          "Content-Type": file.type,
+          ...storageHeaders(serviceRoleKey, file.type),
           "x-upsert": "false",
         },
         body: Buffer.from(await file.arrayBuffer()),
