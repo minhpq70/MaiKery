@@ -6,6 +6,28 @@ import { saveProduct } from "@/app/(admin)/admin/(dashboard)/products/actions";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
+const MAX_UPLOAD_SIZE = 4 * 1024 * 1024;
+
+async function compressImage(file: File) {
+  const bitmap = await createImageBitmap(file);
+  const maxDimension = 2400;
+  const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", 0.8),
+  );
+  if (!blob) throw new Error("Không thể nén ảnh");
+
+  return new File([blob], `${file.name.replace(/\.[^/.]+$/, "")}.jpg`, {
+    type: "image/jpeg",
+  });
+}
+
 export function ProductForm({ product }: { product?: Product }) {
   const [isPending, startTransition] = useTransition();
   const [imageUrl, setImageUrl] = useState(product?.imageUrl || "");
@@ -15,16 +37,11 @@ export function ProductForm({ product }: { product?: Product }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Ảnh không được lớn hơn 5 MB.");
-      e.target.value = "";
-      return;
-    }
-
     setIsUploading(true);
     try {
+      const uploadFile = file.size > MAX_UPLOAD_SIZE ? await compressImage(file) : file;
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", uploadFile);
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -127,7 +144,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 className="hidden" 
               />
             </label>
-            <span className="text-xs text-gray-500 hidden md:inline">JPG, PNG, WebP hoặc GIF — tối đa 5 MB</span>
+            <span className="text-xs text-gray-500 hidden md:inline">Ảnh lớn sẽ được tự nén — tối đa 4 MB sau nén</span>
           </div>
 
           <input 

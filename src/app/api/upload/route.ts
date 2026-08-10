@@ -6,7 +6,8 @@ import { authOptions } from "@/lib/auth";
 export const runtime = "nodejs";
 
 const BUCKET = "product-images";
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// Keep this below Vercel's serverless request body limit.
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const ALLOWED_TYPES = new Map([
   ["image/jpeg", "jpg"],
   ["image/png", "png"],
@@ -91,7 +92,7 @@ export async function POST(req: Request) {
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: "Ảnh không được lớn hơn 5 MB" },
+        { error: "Ảnh không được lớn hơn 4 MB" },
         { status: 400 },
       );
     }
