@@ -34,7 +34,7 @@ export default async function HomePage() {
       {/* Featured Products */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#40332B] mb-4">Sản Phẩm Đang Hot</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#40332B] mb-4">Sản phẩm đang Hot</h2>
           <div className="h-1 w-20 bg-[#D96C4E] mx-auto rounded-full"></div>
         </div>
         
