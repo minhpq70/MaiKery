@@ -36,6 +36,7 @@ export async function POST(req: Request) {
         productId: item.productId,
         productCode: dbProduct.productCode,
         productName: dbProduct.name,
+        unit: dbProduct.unit,
         quantity: item.quantity,
         unitPrice: Number(dbProduct.salePrice),
         lineTotal: item.quantity * Number(dbProduct.salePrice)
@@ -91,6 +92,7 @@ export async function POST(req: Request) {
             productId: i.productId,
             productCode: i.productCode,
             productName: i.productName,
+            unit: i.unit,
             quantity: i.quantity,
             unitPrice: i.unitPrice,
             lineTotal: i.lineTotal

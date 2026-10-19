@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { DEFAULT_PRODUCT_UNIT } from "@/lib/utils";
 
 export async function saveProduct(formData: FormData) {
   const id = formData.get("id") as string;
@@ -11,9 +12,11 @@ export async function saveProduct(formData: FormData) {
   const description = formData.get("description") as string;
   const imageUrl = formData.get("image") as string;
   const salePrice = Number(formData.get("price"));
+  const unit = (formData.get("unit") as string)?.trim() || DEFAULT_PRODUCT_UNIT;
+  const unitDetail = (formData.get("unitDetail") as string)?.trim() || null;
   const isActive = formData.get("active") === "on";
 
-  const data = { productCode, name, description, imageUrl, salePrice, isActive };
+  const data = { productCode, name, description, imageUrl, salePrice, unit, unitDetail, isActive };
 
   if (id) {
     await prisma.product.update({ where: { id }, data });
@@ -23,6 +26,7 @@ export async function saveProduct(formData: FormData) {
 
   revalidatePath("/admin/products");
   revalidatePath("/products");
+  revalidatePath("/");
   redirect("/admin/products");
 }
 

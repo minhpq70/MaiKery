@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { formatQuantity } from "@/lib/utils";
 import { ChevronLeft, CheckCircle2, Copy } from "lucide-react";
 import { PrintButton } from "./print-button";
 
@@ -87,7 +88,7 @@ export default async function BillPage({ params }: { params: Promise<{ orderId: 
                 {order.items.map((item: any) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <div className="flex gap-4">
-                      <div className="font-medium text-[#40332B]">{item.quantity} x</div>
+                      <div className="font-medium text-[#40332B]">{formatQuantity(item.quantity, item.unit)} ×</div>
                       <div className="text-[#5C4D43]">{item.productName || item.product.name}</div>
                     </div>
                     <div className="font-medium text-[#40332B]">

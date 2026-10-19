@@ -5,6 +5,9 @@ import { Product } from "@prisma/client";
 import { saveProduct } from "@/app/(admin)/admin/(dashboard)/products/actions";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { DEFAULT_PRODUCT_UNIT, PRODUCT_UNITS, formatCurrency } from "@/lib/utils";
+
+const CUSTOM_UNIT = "__custom";
 
 const MAX_UPLOAD_SIZE = 4 * 1024 * 1024;
 
@@ -32,6 +35,16 @@ export function ProductForm({ product }: { product?: Product }) {
   const [isPending, startTransition] = useTransition();
   const [imageUrl, setImageUrl] = useState(product?.imageUrl || "");
   const [isUploading, setIsUploading] = useState(false);
+  const initialUnit = product?.unit || DEFAULT_PRODUCT_UNIT;
+  const [unitChoice, setUnitChoice] = useState(
+    PRODUCT_UNITS.includes(initialUnit) ? initialUnit : CUSTOM_UNIT,
+  );
+  const [customUnit, setCustomUnit] = useState(
+    PRODUCT_UNITS.includes(initialUnit) ? "" : initialUnit,
+  );
+  const [price, setPrice] = useState(product?.salePrice?.toString() || "");
+  const [unitDetail, setUnitDetail] = useState(product?.unitDetail || "");
+  const unit = unitChoice === CUSTOM_UNIT ? customUnit.trim() : unitChoice;
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -90,11 +103,61 @@ export function ProductForm({ product }: { product?: Product }) {
             required 
             min="0" 
             step="1000"
-            defaultValue={product?.salePrice?.toString()} 
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D96C4E] focus:bg-white transition-all"
             placeholder="VD: 50000"
           />
         </div>
+      </div>
+
+      <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-[#5C4D43] mb-1.5">Đơn vị tính</label>
+            <input type="hidden" name="unit" value={unit} />
+            <select
+              value={unitChoice}
+              onChange={(e) => setUnitChoice(e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D96C4E] focus:bg-white transition-all"
+            >
+              {PRODUCT_UNITS.map((u) => (
+                <option key={u} value={u}>{u}</option>
+              ))}
+              <option value={CUSTOM_UNIT}>Khác…</option>
+            </select>
+            {unitChoice === CUSTOM_UNIT && (
+              <input
+                value={customUnit}
+                onChange={(e) => setCustomUnit(e.target.value)}
+                required
+                className="mt-2 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D96C4E] focus:bg-white transition-all"
+                placeholder="Nhập đơn vị, VD: cốc"
+              />
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#5C4D43] mb-1.5">
+              Quy cách <span className="font-normal text-gray-400">(tuỳ chọn)</span>
+            </label>
+            <input
+              name="unitDetail"
+              value={unitDetail}
+              onChange={(e) => setUnitDetail(e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D96C4E] focus:bg-white transition-all"
+              placeholder="VD: 6 cái, 500g, đường kính 18cm"
+            />
+          </div>
+        </div>
+
+        <p className="text-sm text-gray-500">
+          Khách sẽ thấy:{" "}
+          <span className="font-bold text-[#8C3D2B]">
+            {formatCurrency(Number(price) || 0)} / {unit || "…"}
+          </span>
+          {unitDetail.trim() && <span className="text-[#5C4D43]"> · {unitDetail.trim()}</span>}
+        </p>
       </div>
 
       <div>

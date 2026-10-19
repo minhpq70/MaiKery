@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
+import { PriceWithUnit } from "@/components/price-with-unit";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 
 export default function CartPage() {
@@ -57,7 +58,7 @@ export default function CartPage() {
                     <div>
                       <h3 className="font-bold text-[#40332B] truncate max-w-[150px] sm:max-w-[200px]">{item.productName}</h3>
                       <p className="text-sm text-[#8C3D2B] font-medium">
-                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.unitPrice)}
+                        <PriceWithUnit price={item.unitPrice} unit={item.unit} />
                       </p>
                     </div>
                   </div>

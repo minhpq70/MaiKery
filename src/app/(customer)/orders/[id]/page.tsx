@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { formatQuantity } from "@/lib/utils";
 import { ArrowLeft, MapPin, Package, Phone, CreditCard, CalendarClock } from "lucide-react";
 
 export default async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -152,7 +153,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
               </div>
               <div className="text-right">
                 <div className="font-medium text-[#40332B]">
-                  {formatCurrency(item.unitPrice)} <span className="text-gray-400 text-sm font-normal">x {item.quantity}</span>
+                  {formatCurrency(item.unitPrice)} <span className="text-gray-400 text-sm font-normal">x {formatQuantity(item.quantity, item.unit)}</span>
                 </div>
                 <div className="font-bold text-[#D96C4E] mt-1">
                   {formatCurrency(item.lineTotal)}

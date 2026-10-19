@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useCart } from "@/context/cart-context";
 import { Product } from "@prisma/client";
+import { formatQuantity } from "@/lib/utils";
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -13,29 +14,33 @@ export default function AddToCartButton({ product }: { product: Product }) {
       productId: product.id,
       productCode: product.productCode,
       productName: product.name,
+      unit: product.unit,
       unitPrice: Number(product.salePrice),
       quantity: quantity,
       imageUrl: product.imageUrl || "",
     });
-    alert(`Đã thêm ${quantity} x ${product.name} vào giỏ hàng!`);
+    alert(`Đã thêm ${formatQuantity(quantity, product.unit)} ${product.name} vào giỏ hàng!`);
   };
 
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      <div className="flex items-center border-2 border-[#F2E8D9] rounded-full overflow-hidden bg-white w-32 h-14">
-        <button 
-          onClick={() => setQuantity(Math.max(1, quantity - 1))}
-          className="w-10 h-full flex items-center justify-center text-[#5C4D43] hover:bg-[#FFFBF5] transition-colors"
-        >
-          -
-        </button>
-        <span className="flex-1 text-center font-bold text-[#40332B]">{quantity}</span>
-        <button 
-          onClick={() => setQuantity(quantity + 1)}
-          className="w-10 h-full flex items-center justify-center text-[#5C4D43] hover:bg-[#FFFBF5] transition-colors"
-        >
-          +
-        </button>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center border-2 border-[#F2E8D9] rounded-full overflow-hidden bg-white w-32 h-14">
+          <button 
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="w-10 h-full flex items-center justify-center text-[#5C4D43] hover:bg-[#FFFBF5] transition-colors"
+          >
+            -
+          </button>
+          <span className="flex-1 text-center font-bold text-[#40332B]">{quantity}</span>
+          <button 
+            onClick={() => setQuantity(quantity + 1)}
+            className="w-10 h-full flex items-center justify-center text-[#5C4D43] hover:bg-[#FFFBF5] transition-colors"
+          >
+            +
+          </button>
+        </div>
+        <span className="text-[#5C4D43] font-medium">{product.unit}</span>
       </div>
       <button 
         onClick={handleAdd}

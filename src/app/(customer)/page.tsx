@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { PriceWithUnit } from "@/components/price-with-unit";
 
 export default async function HomePage() {
   const featuredProducts = await prisma.product.findMany({
@@ -51,9 +52,12 @@ export default async function HomePage() {
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-[#40332B] mb-2 truncate group-hover:text-[#D96C4E] transition-colors">{product.name}</h3>
-                  <p className="text-[#8C3D2B] font-bold text-lg">
-                    {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(product.salePrice))}
+                  <h3 className="text-lg font-bold text-[#40332B] mb-1 truncate group-hover:text-[#D96C4E] transition-colors">{product.name}</h3>
+                  {product.unitDetail && (
+                    <p className="text-sm text-[#5C4D43]/80 mb-1 truncate">{product.unitDetail}</p>
+                  )}
+                  <p className="text-[#8C3D2B] font-bold text-lg mt-1">
+                    <PriceWithUnit price={Number(product.salePrice)} unit={product.unit} />
                   </p>
                 </div>
               </div>

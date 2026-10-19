@@ -23,6 +23,7 @@ export interface CartItem {
   productId: string;
   productCode: string;
   productName: string;
+  unit?: string;
   imageUrl?: string | null;
   quantity: number;
   unitPrice: number;

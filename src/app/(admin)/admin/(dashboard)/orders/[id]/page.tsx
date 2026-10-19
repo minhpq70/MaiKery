@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { formatQuantity } from "@/lib/utils";
 import { ArrowLeft, User, MapPin, CreditCard, ShoppingBag, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { UpdateOrderStatusForm } from "@/components/admin/update-order-status-form";
@@ -67,7 +68,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                   </div>
                   <div className="text-right">
                     <p className="font-medium text-[#5C4D43]">{new Intl.NumberFormat("vi-VN").format(Number(item.unitPrice))}đ</p>
-                    <p className="text-sm text-gray-500">x {item.quantity}</p>
+                    <p className="text-sm text-gray-500">x {formatQuantity(item.quantity, item.unit)}</p>
                   </div>
                   <div className="text-right w-24">
                     <p className="font-bold text-[#D96C4E]">{new Intl.NumberFormat("vi-VN").format(Number(item.lineTotal))}đ</p>

@@ -5,6 +5,7 @@ import { useCart } from "@/context/cart-context";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { checkoutSchema } from "@/lib/validations";
+import { formatQuantity } from "@/lib/utils";
 import { z } from "zod";
 
 export default function CheckoutPage() {
@@ -233,7 +234,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-sm font-bold text-[#40332B] line-clamp-2">{item.productName}</h4>
-                    <p className="text-xs text-[#5C4D43] mt-1">SL: {item.quantity}</p>
+                    <p className="text-xs text-[#5C4D43] mt-1">SL: {formatQuantity(item.quantity, item.unit)}</p>
                     <p className="text-sm font-bold text-[#8C3D2B] mt-1">
                       {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.unitPrice * item.quantity)}
                     </p>
