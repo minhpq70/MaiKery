@@ -27,21 +27,16 @@ export default async function ProductsPage() {
                 alt={product.name} 
                 className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
               />
+              <div className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-[#FFFBF5] shadow-md flex items-center justify-center text-[#D96C4E] group-hover:bg-[#D96C4E] group-hover:text-white transition-colors border border-[#F2E8D9] group-hover:border-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              </div>
             </div>
             <div className="p-6 flex flex-col flex-grow">
               <h3 className="text-lg font-bold text-[#40332B] mb-2 group-hover:text-[#D96C4E] transition-colors line-clamp-2">{product.name}</h3>
-              {product.unitDetail && (
-                <p className="text-sm text-[#5C4D43]/80 -mt-1 mb-2">{product.unitDetail}</p>
-              )}
               <p className="text-[#5C4D43] text-sm mb-4 line-clamp-2 flex-grow">{product.description}</p>
-              <div className="flex items-center justify-between mt-auto">
-                <p className="text-[#8C3D2B] font-bold text-lg">
-                  <PriceWithUnit price={Number(product.salePrice)} unit={product.unit} />
-                </p>
-                <div className="w-8 h-8 rounded-full bg-[#FFFBF5] flex items-center justify-center text-[#D96C4E] group-hover:bg-[#D96C4E] group-hover:text-white transition-colors border border-[#F2E8D9] group-hover:border-transparent">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                </div>
-              </div>
+              <p className="text-[#8C3D2B] font-bold text-lg mt-auto">
+                <PriceWithUnit price={Number(product.salePrice)} unit={product.unit} unitDetail={product.unitDetail} />
+              </p>
             </div>
           </Link>
         ))}

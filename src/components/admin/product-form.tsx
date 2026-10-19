@@ -5,7 +5,7 @@ import { Product } from "@prisma/client";
 import { saveProduct } from "@/app/(admin)/admin/(dashboard)/products/actions";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { DEFAULT_PRODUCT_UNIT, PRODUCT_UNITS, formatCurrency } from "@/lib/utils";
+import { DEFAULT_PRODUCT_UNIT, PRODUCT_UNITS, formatCurrency, formatUnitLabel } from "@/lib/utils";
 
 const CUSTOM_UNIT = "__custom";
 
@@ -154,9 +154,8 @@ export function ProductForm({ product }: { product?: Product }) {
         <p className="text-sm text-gray-500">
           Khách sẽ thấy:{" "}
           <span className="font-bold text-[#8C3D2B]">
-            {formatCurrency(Number(price) || 0)} / {unit || "…"}
+            {formatCurrency(Number(price) || 0)} / {unit ? formatUnitLabel(unit, unitDetail) : "…"}
           </span>
-          {unitDetail.trim() && <span className="text-[#5C4D43]"> · {unitDetail.trim()}</span>}
         </p>
       </div>
 

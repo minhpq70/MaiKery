@@ -24,6 +24,7 @@ export interface CartItem {
   productCode: string;
   productName: string;
   unit?: string;
+  unitDetail?: string | null;
   imageUrl?: string | null;
   quantity: number;
   unitPrice: number;

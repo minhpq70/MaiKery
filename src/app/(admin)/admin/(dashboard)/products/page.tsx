@@ -64,6 +64,8 @@ export default async function AdminProductsPage(props: {
                 <th className="px-6 py-4">Sản phẩm</th>
                 <th className="px-6 py-4">Mã SP</th>
                 <th className="px-6 py-4">Giá bán</th>
+                <th className="px-6 py-4">Đơn vị tính</th>
+                <th className="px-6 py-4">Quy cách</th>
                 <th className="px-6 py-4">Giá vốn / Lợi nhuận</th>
                 <th className="px-6 py-4">Trạng thái</th>
                 <th className="px-6 py-4 text-right">Thao tác</th>
@@ -99,6 +101,12 @@ export default async function AdminProductsPage(props: {
                     </td>
                     <td className="px-6 py-4 font-bold text-[#D96C4E]">
                       {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(product.salePrice))}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {product.unit}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {product.unitDetail || <span className="text-gray-400">—</span>}
                     </td>
                     <td className="px-6 py-4">
                       {(() => {
@@ -140,7 +148,7 @@ export default async function AdminProductsPage(props: {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
                     Không tìm thấy sản phẩm nào
                   </td>
                 </tr>

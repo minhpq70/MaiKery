@@ -27,14 +27,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="flex flex-col justify-center">
           <div className="mb-2 text-[#D96C4E] text-sm font-bold tracking-wider uppercase">MaiKery Signature</div>
           <h1 className="text-3xl md:text-5xl font-serif font-bold text-[#40332B] mb-4">{product.name}</h1>
-          <p className={`text-2xl font-bold text-[#8C3D2B] ${product.unitDetail ? "mb-2" : "mb-8"}`}>
-            <PriceWithUnit price={Number(product.salePrice)} unit={product.unit} />
+          <p className="text-2xl font-bold text-[#8C3D2B] mb-8">
+            <PriceWithUnit price={Number(product.salePrice)} unit={product.unit} unitDetail={product.unitDetail} />
           </p>
-          {product.unitDetail && (
-            <p className="text-[#5C4D43] mb-8">
-              Quy cách: <span className="font-medium text-[#40332B]">{product.unitDetail}</span>
-            </p>
-          )}
           <div className="prose prose-stone mb-10 text-[#5C4D43]">
             {product.description || "Chưa có mô tả chi tiết cho sản phẩm này."}
           </div>

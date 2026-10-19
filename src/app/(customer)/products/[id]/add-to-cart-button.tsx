@@ -15,6 +15,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
       productCode: product.productCode,
       productName: product.name,
       unit: product.unit,
+      unitDetail: product.unitDetail,
       unitPrice: Number(product.salePrice),
       quantity: quantity,
       imageUrl: product.imageUrl || "",

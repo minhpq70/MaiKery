@@ -1,18 +1,23 @@
-import { DEFAULT_PRODUCT_UNIT, formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatUnitLabel } from "@/lib/utils";
 
 export function PriceWithUnit({
   price,
   unit,
+  unitDetail,
   className = "",
 }: {
   price: number;
   unit?: string | null;
+  unitDetail?: string | null;
   className?: string;
 }) {
+  // Price and unit label each stay on one line; on narrow cards the label wraps below as a whole
   return (
-    <span className={`whitespace-nowrap ${className}`}>
-      {formatCurrency(price)}
-      <span className="ml-1 text-[0.75em] font-normal text-[#5C4D43]">/ {unit || DEFAULT_PRODUCT_UNIT}</span>
+    <span className={className}>
+      <span className="whitespace-nowrap">{formatCurrency(price)}</span>{" "}
+      <span className="whitespace-nowrap text-[0.75em] font-normal text-[#5C4D43]">
+        / {formatUnitLabel(unit, unitDetail)}
+      </span>
     </span>
   );
 }
